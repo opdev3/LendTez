@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>LendTez</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="./css/bulma.min.css"/>
+    <link rel="stylesheet" href="./css/bulma-divider.min.css"/>
+    <link rel="stylesheet" href="./css/animate.min.css"/>
+    <link rel="stylesheet" href="./css/fontawesome.all.min.css"/>
+
+<!--    <script src="./js/bulma-toast.min.js"></script>-->
+    <script src="./js/walletbeacon-2.3.13.min.js"></script>
+    
+    <style>
+        .is-collapsible {
+            height: auto;
+            max-height: 0;
+            overflow-y: hidden;
+            transition: max-height 0.2s ease;
+        }
+        .is-collapsible.is-active {
+            max-height: 1200px !important;
+        }
+
+        .faq {
+            border: 1px solid grey;
+            border-radius: 10px;
+            padding: 0.25rem;
+        }
+        .faq-body {
+            border: 0;
+        }
+    </style>
+    
+</head>
+
+<body>
+    
+<div class="container">
+<nav class="navbar has-background-info-light" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand ml-0 mr-5">
+        <div class="navbar-item">
+            <p class="title has-text-info-dark is-3">LendTez</p>
+        </div>
+        <div id="btnBurger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="true" data-target="navbarMenu"
+             onclick="this.classList.toggle('is-active'); document.getElementById('navbarMenu').classList.toggle('is-active');">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </div>
+    </div>
+    <div id="navbarMenu" class="navbar-menu mx-0 has-background-info-light has-text-weight-semibold">
+        <div class="navbar-start">
+            <a id="btnMyDeals" class="navbar-item">Deals</a>
+            <a id="btnMyLoans" class="navbar-item">Borrow</a>
+            <a id="btnLoans" class="navbar-item mr-5">Lend</a>
+            <a id="btnInfo" class="navbar-item">Info</a>
+        </div>
+        <div class="navbar-end ">
+            <div id="divConnect" class="navbar-item has-text-centered py-1">
+                <button id="btnConnect" class="button is-info is-rounded has-text-weight-semibold">Connect wallet</button>
+            </div>
+            <div id="divDisconnect" class="navbar-item has-dropdown is-hoverable is-hidden">
+                <a class="navbar-link has-text-weight-semibold">
+                    <span class="icon"><i class="fa-solid fa-user"></i></span>
+                    <span id="aAddress"></span>
+                </a>
+                <div id="divUserMenu" class="navbar-dropdown has-background-info-light is-right">
+                    <a id="btnCopyAddress" class="navbar-item">
+                        <span class="icon pr-2"><i class="fa-regular fa-copy"></i></span>
+                        <span>Copy address</span>
+                    </a>
+                    <hr class="navbar-divider has-background-grey-lighter"/>
+                    <a id="btnDisconnect" class="navbar-item">
+                        <span class="icon"><i class="fas fa-arrow-right-from-bracket"></i></span>
+                        <span>Disconnect</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</div>
+
+<div id="content" class="container">
+
+
+<div id="contentMyDeals" class="is-hidden">
+    <div class="level p-3">
+        <div class="level-item is-justify-content-start">
+            <h2 class="title is-2">My deals</h2>
+        </div>
+    </div>
+    <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th style="width: 0px;"></th>
+                <th class="has-text-weight-semibold has-text-grey">Asset</th>
+                <th class="has-text-weight-semibold has-text-grey">Value</th>
+                <th class="has-text-weight-semibold has-text-grey">Reward</th>
+                <th class="has-text-weight-semibold has-text-grey">Term</th>
+                <th class="has-text-weight-semibold has-text-grey">Collateral</th>
+            </tr>
+        </thead>
+        <tbody id="tblMyDeals">
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+
+<div id="modalDeal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-info-light">
+            <div class="modal-card-title">
+                <h2 id="mdTitle" class="title is-3"></h2>
+            </div>
+            <button class="delete" aria-label="close" onclick="document.getElementById('modalDeal').classList.remove('is-active');"></button>
+        </header>
+        <div class="modal-card-body">
+            <div class="columns">
+                <div class="column">
+                        <span class="ml-3 has-text-weight-semibold has-text-grey">Amount</span>
+                        <div class="level-item has-text-centered is-size-3">
+                            <figure class="image is-48x48 mr-1"><img id="mdSumTokenImg" src=""></figure>
+                            <span id="mdSumTokenName"></span>&nbsp;<span id="mdSumAmount">100</span>
+                        </div>
+                </div>
+            </div>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="has-text-weight-semibold has-text-grey">Deal details</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="has-text-weight-semibold">
+                        <td class="has-text-grey has-text-right" style="width: 50%; border-width: 0;">
+                            Loan:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mdLoanTokenImg" src=""></figure>
+                            <span id="mdLoanTokenName"></span>&nbsp;<span id="mdLoanAmount"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold">
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Reward:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mdRewardTokenImg" src=""></figure>
+                            <span id="mdRewardTokenName"></span>&nbsp;<span id="mdRewardAmount"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold" >
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Term:
+                        </td>
+                        <td style="border-width: 0;">
+                            <span id="mdTime"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold" >
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Collateral:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mdDepositTokenImg" src=""></figure>
+                            <span id="mdDepositTokenName"></span>&nbsp;<span id="mdDepositAmount"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <footer class="modal-card-foot has-background-info-light is-justify-content-center">
+            <div class="">
+                <button id="mdButton" class="button is-info is-rounded has-text-weight-semibold"></button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+
+
+<div id="contentMyLoans" class="is-hidden">
+    <div class="level p-3 is-mobile">
+        <div class="level-item is-justify-content-start is-pulled-left">
+            <h2 class="title is-2">My loans</h2>
+        </div>
+        <div class="level-item is-justify-content-end is-pulled-right">
+            <button id="btnNewMyLoan" class="button is-info is-rounded has-text-weight-semibold" disabled="">
+                <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                <span>New loan</span>
+            </button>
+        </div>
+    </div>
+    <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th class="has-text-weight-semibold has-text-grey">Asset</th>
+                <th class="has-text-weight-semibold has-text-grey">Value</th>
+                <th class="has-text-weight-semibold has-text-grey">Reward</th>
+                <th class="has-text-weight-semibold has-text-grey">Term</th>
+                <th class="has-text-weight-semibold has-text-grey">Collateral</th>
+                <th class="has-text-weight-semibold has-text-grey">Expire</th>
+            </tr>
+        </thead>
+        <tbody id="tblMyLoans">
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+<div id="modalMyLoan" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-info-light">
+            <div class="modal-card-title">
+                <h2 id="mmlTitle" class="title is-3">New loan request</h2>
+            </div>
+            <button class="delete" aria-label="close" onclick="document.getElementById('modalMyLoan').classList.remove('is-active');"></button>
+        </header>
+        <div class="modal-card-body">
+
+            <div class="divider mt-0 mb-1 is-left"><h3 class="title is-5">Loan</h3></div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field is-vertical mb-1">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Asset</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control is-flex">
+                                    <figure class="image is-32x32 my-1 mr-1 is-pulled-left is-flex-shrink-0">
+                                        <img id="mmlLoanTokenImage" alt="" src=""/>
+                                    </figure>
+                                    <div class="select is-fullwidth">
+                                        <select id="mmlLoanToken"><option value="" selected="">[select token]</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="is-pulled-right has-text-grey m-0 p-0 is-size-7">
+                        <span id="mmlLoanTokenAddress" style="cursor: copy">&nbsp;</span>
+                    </p>
+                </div>
+                <div class="column">
+                    <div class="field is-vertical">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Amount</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control">
+                                    <input id="mmlLoanAmount" class="input js-calc-apr" type="text" placeholder="0.0"
+                                           onkeypress="if (isNaN(this.value + String.fromCharCode(event.keyCode))) return false;"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field is-vertical">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Loan term</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select id="mmlTime" class="js-calc-apr">
+                                            <option value="0.0021">3 min</option>
+                                            <option value="7">7 days</option>
+                                            <option value="14">14 days</option>
+                                            <option value="30">30 days</option>
+                                            <option value="90">90 days</option>
+                                            <option value="180">180 days</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field is-vertical mb-0">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Lender reward</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control is-flex">
+                                    <figure class="image is-32x32 my-1 mr-1 is-pulled-left is-flex-shrink-0">
+                                        <img id="mmlRewardTokenImage" alt="" src=""/>
+                                    </figure>
+                                    <input id="mmlRewardAmount" class="input js-calc-apr" type="text" placeholder="0.0"
+                                           onkeypress="if (isNaN(this.value + String.fromCharCode(event.keyCode))) return false;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="is-pulled-right has-text-weight-semibold has-text-grey m-0 p-0 is-size-7">APR:&nbsp;<span id="mmlAPR">-</span>&nbsp;%</p>
+                </div>
+            </div>
+
+            <div class="divider mb-1 is-left"><h3 class="title is-5">Collateral</h3></div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field is-vertical mb-1">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Asset</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control is-flex">
+                                    <figure class="image is-32x32 my-1 mr-1 is-pulled-left is-flex-shrink-0">
+                                        <img id="mmlDepositTokenImage" alt="" src=""/>
+                                    </figure>
+                                    <div class="select is-fullwidth">
+                                        <select id="mmlDepositToken"><option value="" selected="">[select token]</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="is-pulled-right has-text-grey m-0 p-0 is-size-7">
+                        <span id="mmlDepositTokenAddress" style="cursor: copy">&nbsp;</span>
+                    </p>
+                </div>
+                <div class="column">
+                    <div class="field is-vertical">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Amount</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control">
+                                    <input id="mmlDepositAmount" class="input" type="text" placeholder="0.0"
+                                           onkeypress="if (isNaN(this.value + String.fromCharCode(event.keyCode))) return false;"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider mb-1 is-left"><h3 class="title is-5 has-text-grey">Optional</h3></div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field is-vertical">
+                        <div class="has-text-left">
+                            <label class="label has-text-weight-semibold has-text-grey">Request expires:</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p class="control">
+                                    <input id="mmlValidity" class="input" type="datetime-local"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                </div>
+            </div>
+
+        </div>
+        <footer class="modal-card-foot has-background-info-light is-justify-content-center">
+            <div class="">
+                <button id="mmlButton" class="button is-info is-rounded has-text-weight-semibold">Create request</button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+
+
+<div id="contentLoans" class="is-hidden">
+    <div class="level p-3">
+        <div class="level-item is-justify-content-start">
+            <h2 class="title is-2">Loan requests</h2>
+        </div>
+    </div>
+    <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th class="has-text-weight-semibold has-text-grey">Asset</th>
+                <th class="has-text-weight-semibold has-text-grey">Value</th>
+                <th class="has-text-weight-semibold has-text-grey">Reward</th>
+                <th class="has-text-weight-semibold has-text-grey">Term</th>
+                <th class="has-text-weight-semibold has-text-grey">Collateral</th>
+            </tr>
+        </thead>
+        <tbody id="tblLoans">
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+<div id="modalLoan" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-info-light">
+            <div class="modal-card-title">
+                <h2 id="mlTitle" class="title is-3"></h2>
+            </div>
+            <button class="delete" aria-label="close" onclick="document.getElementById('modalLoan').classList.remove('is-active');"></button>
+        </header>
+        <div class="modal-card-body">
+            <table class="table is-fullwidth">
+                <tbody>
+                    <tr class="has-text-weight-semibold">
+                        <td class="has-text-grey has-text-right" style="width: 50%; border-width: 0;">
+                            Requested asset:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mlLoanTokenImg" src=""></figure>
+                            <span id="mlLoanTokenName"></span>&nbsp;<span id="mlLoanAmount"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold">
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Lender reward:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mlRewardTokenImg" src=""></figure>
+                            <span id="mlRewardTokenName"></span>&nbsp;<span id="mlRewardAmount"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold" >
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Loan term:
+                        </td>
+                        <td style="border-width: 0;">
+                            <span id="mlTime"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold" >
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Expire:
+                        </td>
+                        <td style="border-width: 0;">
+                            <span id="mlValidity"></span>
+                        </td>
+                    </tr>
+                    <tr class="has-text-weight-semibold" >
+                        <td class="has-text-grey has-text-right" style="border-width: 0;">
+                            Collateral:
+                        </td>
+                        <td style="border-width: 0;">
+                            <figure class="image is-24x24 mr-1 is-pulled-left"><img id="mlDepositTokenImg" src=""></figure>
+                            <span id="mlDepositTokenName"></span>&nbsp;<span id="mlDepositAmount">5</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <footer class="modal-card-foot has-background-info-light is-justify-content-center">
+            <div class="">
+                <button id="mlButton" class="button is-info is-rounded has-text-weight-semibold"></button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+
+<div id="contentInfo" class="p-3 is-hidden">
+    <div class="level is-mobile">
+        <div class="level-item is-justify-content-start is-pulled-left">
+            <h2 class="title is-2">Info</h2>
+        </div>
+        <div class="level-item is-justify-content-end is-pulled-right">
+            <span class="icon is-size-5 is-clickable mr-5" onclick="window.open('https://twitter.com/opusdeidefi', '_blank');">
+                <i class="fa-brands fa-twitter"></i>
+            </span>
+            <span class="icon is-size-5 is-clickable" onclick="window.open('https://github.com/opdev3/LendTez', '_blank');">
+                <i class="fa-brands fa-github"></i>
+            </span>
+        </div>
+    </div>
+
+    <div class="is-fullwidth">
+    
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>What is LendTez?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>LendTez is an open-source, Peer-to-Peer lending and borrowing protocol with <span class="has-text-weight-semibold">no commissions and no liquidation</span> where users can participate as borrowers or lenders. Borrowers can borrow XTZ and Tezos-based tokens built with the FA token standards (FA1.2 and FA2), while lenders provide liquidity.</p>
+                <br/><p>With every update and release of new versions, previous versions of the protocol will function permanently, with 100% uptime, provided the continued existence of the Tezos blockchain. If you want to see more Tezos tokens available for borrowing, please drop us a line on our <a href="https://twitter.com/opusdeidefi" target="_blank">Twitter</a> or <a href="https://discord.com/invite/FmtTyChB" target="_blank">Discord</a>.</p>
+            </div>
+        </div>
+    </article>
+    
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>How does LendTez work?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>To create a new loan request, provide liquidity to existing loan requests, or see your existing deals, head over to the interface and connect a Tezos wallet.<br/>Learn more about Tezos wallets <a href="https://tezos.com/learn/store-and-use/" target="_blank">here</a>.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>What's the cost?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>Interacting with the protocol requires transactions and so transaction fees for Tezos Blockchain usage, which depend on the network status and transaction complexity. <span class="has-text-weight-semibold">There are no additional fees or Service Fees other than the network transaction cost.</span></p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>Is it safe to use it?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>We have tried to minimise the risk as much as possible - the protocol code is public and open source, which allows anyone to interact with a user interface client or directly with the smart contracts on the Tezos network.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>How to borrow currency?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+<p>Go to the <span class="has-text-weight-semibold">Borrow</span> section. Create a new loan request by clicking the <span class="has-text-weight-semibold">+ New loan</span> button. You'll see a pop–up with information to be filled or chosen from dropdown fields.
+<br/>The pop-up is divided into three categories: Loan, Collateral and Optional.</p>
+<br/><p><span class="has-text-weight-semibold">&middot; Loan</span> (all fields are mandatory):
+<br/><u><i>Asset</i></u> stands for the currency you want to borrow.
+<br/><u><i>The amount</i></u> is simply how many tokens of chosen currency you need to borrow.
+<br/><u><i>Loan term</i></u> your loan duration or how long do you plan to keep the currency?
+<br/><u><i>Reward</i></u> set any amount of tokens the liquidity provider for your loan will get for being such a lovely person and provide you with the desired token. The bigger the number, the more attractive your request will be.
+<br/>(*APR stands for the Annual Percentage Rate)
+</p>
+<br/><p><span class="has-text-weight-semibold">&middot; Collateral</span>. Simply put it is insurance for the liquidity provider, if a borrower won't pay back the loan:
+<br/><u><i>Asset</i></u> stands for currencies you can choose as collateral.
+<br/><u><i>Amount</i></u> - how many tokens of a collateralised asset you are offering.
+</p>
+<br/><p><span class="has-text-weight-semibold">&middot; Optional</span>. As the name says, you don't have to. The system offers to make a decision if the request will be hanging there forever or just for some time.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>How does lending work?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>For lending tokens, go to the <span class="has-text-weight-semibold">Lend</span> section. Choose a loan request from the list and click on it. From the pop-up window, click on the <span class="has-text-weight-semibold">Lend</span> button, and confirm the transaction from your wallet.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>What is "Deals"?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>List of existing users' lendings and borrowings. As a lender you can use collateral withdrawal from outdated deals, as a borrower you can repay loans.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>How to cancel my loan request?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>Click on a field with the loan request and then on a Cancel request button in the appeared pop-up window.</p>
+            </div>
+        </div>
+    </article>
+
+     <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>Where are funds stored?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>All funds are stored in a smart contract. The smart contract code is public, open source and formally verified.</p>
+            </div>
+        </div>
+    </article>
+
+    <article class="message has-background-white faq">
+        <div class="js-faq-item message-header is-clickable has-text-black has-background-white">
+            <p>Does LendTez have smart contract audits?</p>
+            <span class="icon"><i class="fas fa-angle-up" aria-hidden="true"></i></span>
+        </div>
+        <div class="is-collapsible">
+            <div class="message-body has-background-white faq-body">
+                <p>The current protocol version 1.0 is built on version 0.71 and audited by Inference AG. Please find the link to the audit <a href="https://github.com/InferenceAG/ReportPublications/blob/master/Inference%20AG%20-%20OpusDei%20-%20P2P%20lending%20and%20borrowing%20-%20v1.0.pdf" target="_blank">here</a>.</p>
+            </div>
+        </div>
+    </article>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+    <script src="./js/index.js"></script>
+</body>
+</html>
