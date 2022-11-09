@@ -47,10 +47,10 @@ This version allows users to use XTZ and Tezos-based tokens built with the FA to
 
 
 1. `Log in` (Connect wallet) Enter the system with your wallet. 
-2. `My Deals.` View and repay existing deals - both borrowings and lendings
-3. `Borrow.` Create a borrow request by providing the necessary information, like the choice of a token you want to borrow ( = the reward token), the number of tokens to borrow, the number and type of tokens as collateral and the reward, time (loan term). There is an optional field *"Deadline"* for liquidation of the request if it wasn't accepted by a creditor.
-4. `Lend.` View borrowing requests from other users and lend requested tokens.
-5. `Info.` Information about the service done in a simple-to-read F.A.Q style 
+2. `Deals.` View and repay existing deals - both borrowings and lendings
+3. `Borrow.` Create a loan request by providing the necessary information, like the choice of a token you want to borrow ( = the reward token), the number of tokens to borrow, the number and type of tokens as collateral and the reward, time (loan term). There is an optional field *"Deadline"* for liquidation of the request if it wasn't accepted by a creditor.
+4. `Lend.` View loan requests from other users and lend requested tokens.
+5. `Info.` Information about the service done in a simple-to-read F.A.Q. style 
 
 # How it works for lenders
 
@@ -59,7 +59,7 @@ This version allows users to use XTZ and Tezos-based tokens built with the FA to
 * Approve the permission request from the wallet. 
 * Visit the **Lend** section from the platform’s dashboard for loans to be funded. Select a loan to fund. Check if the loan request reward and collateral are good for you.
 * Make sure the necessary crypto asset is in the wallet.
-* Click on the **Supply** button from the pop-up you see after clicking on a loan row.
+* Click on the **Lend** button from the pop-up you see after clicking on a loan row.
 * Approve the permission request from the wallet.
 * Collect the reward together with the asset when the loan is returned. If the borrower fails to repay the loan, you can seize the borrower’s collateral to make up for your losses.
 * **Important!** If the borrower fails to repay the loan, the system will not send you the collateral. You will have to collect the collateral manually! 
@@ -70,14 +70,14 @@ This version allows users to use XTZ and Tezos-based tokens built with the FA to
 * Choose your preferred wallet from the list.
 * Approve the permission request from the wallet. 
 * Visit the **Borrow** section from the platform’s dashboard to see your active loan requests.
-* **Create a new loan request** by clicking the **+New loan** button.
-* **The Borrow Pop-up**:
+* **Create a new loan request** by clicking the **+ New loan** button.
+* **The new loan request pop-up**:
 
 **LOAN**
 1. `Asset` Choose an asset to borrow from the drop-down list (select token).
 2. `Amount` Enter the number of tokens you want to borrow.
 3. `Loan term` Choose the time of your request - how long you want to keep the asset. You can pay it back before the time runs out. If you don't pay it in time, the lender will have the opportunity to seize your collateral.  
-4. `Reward` Reward token type is chosen automatically with the Loan. Set the reward amount manually. 
+4. `Lender reward` Reward token type is chosen automatically with the Loan. Set the reward amount manually. 
 **The reward is given to a lender in recognition of their provided liquidity. The higher the reward, the more attractive the request. The Greater the Effort, the Sweeter the Reward**
 
 **COLLATERAL**
@@ -85,9 +85,9 @@ This version allows users to use XTZ and Tezos-based tokens built with the FA to
 2. `Amount` Set the amount of chosen collateral assets a lender will get if the loan is not paid in time. **Same as the reward affects the attractiveness of your request.**
 
 **OPTIONAL**
-1. `Request valid till` You can set the timing for that request to be active until someone fills it up.
+1. `Request expires` You can set the timing for that loan request to be active until someone fills it up.
 
-* Press the **Send request** button.
+* Press the **Create request** button.
 * Approve the new loan request from the wallet.
 * You will see the loan request from the **Borrow** section. A lender will see it from the **Lend** section as a loan to supply
 
